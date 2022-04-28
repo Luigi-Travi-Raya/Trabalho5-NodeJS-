@@ -1,0 +1,27 @@
+include ./layout/style.pug
+section.gradient-custom.pt-5.pb-5
+    div.container.py-5.h-100
+        div.row.d-flex.justify-content-center.align-items-center.h-100.w-100
+            div.col-12.col-md-8.col-lg-6.col-xl-5
+                div.card.bg-dark.text-white(style="border-radius: 1rem;")
+                    div.card-body.p-4.text-center
+                        div.mb-md-5.mt-md-4
+                            h2.fw-bold.mb-2.text-uppercase Login
+                            p.text-white-50.mb-5 
+
+                            form(action="/logar", method="post") 
+                                div.form-outline-form-white-mt-5
+                                    label.form-label(for="email") Email
+                                    input.form-control.form-control-lg(type="email", name="email", required)  
+
+                                div.form-outline.form-white.mt-5.mb-2
+                                    label.form-label(for="senha") Senha
+                                    input.form-control.form-control-lg(type="password", name="senha", required)
+
+                                p.mb-0 Não possui uma conta ainda? Registre-se   
+                                    a.text-white-50.fw-bold(href="registro") aqui
+
+                                a(href="/")
+                                    div.btn.btn-outline-danger.btn-lg.px-5.mt-5.m-3 Ínicio
+                                
+                                button.btn.btn-outline-success.btn-lg.px-5.mt-5.m-3(type="submit") Login

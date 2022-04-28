@@ -1,0 +1,13 @@
+include ./layout/header.pug
+.container.mt-3.bg-secondary(style="width:100%")
+    .row
+        - let n = 0;
+        while n < 6
+            .col-sm-3.mt-3
+                .card.border-0.bg-light(style="width:100%")
+                    img.card-img-top(src='img/teste3.png')
+                    .card-body
+                        h5.card-title Nome da imagem  
+                        p.card-text= n++
+        
+

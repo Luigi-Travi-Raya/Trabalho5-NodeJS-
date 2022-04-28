@@ -1,0 +1,31 @@
+include ./layout/style.pug
+section.gradient-custom.pt-1.pb-5
+    .container.py-3
+        div.row.d-flex.justify-content-center.align-items-center.h-100.w-100
+            div.col-12.col-md-8.col-lg-6.col-xl-5
+                div.card.bg-dark.text-white(style="border-radius: 1rem;")
+                    div.card-body.p-3.text-center
+                        div.mt-md-4
+                            h2.fw-bold.mb-2.text-uppercase Registro
+                            p.text-white-50.mb-5 
+
+                            form(action="/registrar", method="post") 
+                                div.form-outline.form-white.mt-5
+                                    label.form-label(for="nome") Nome
+                                    input.form-control.form-control-lg(type="text", name="nome", required)
+                                
+                                div.form-outline.form-white.mt-5.mb-2
+                                    label.form-label(for="email") Email
+                                    input.form-control.form-control-lg(type="email", name="email", required)
+
+                                div.form-outline.form-white.mt-5.mb-2
+                                    label.form-label(for="senha") Senha
+                                    input.form-control.form-control-lg(type="password", name="senha", required)
+
+                                p.mb-0 Já possui conta? Se logue 
+                                    a.text-white-50.fw-bold(href="login") aqui
+
+                                a(href="/")
+                                    div.btn.btn-outline-danger.btn-lg.px-5.mt-5.m-3 Ínicio
+
+                                button.btn.btn-outline-success.btn-lg.px-5.mt-5.m-3(type="submit") Registrar
