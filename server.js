@@ -56,23 +56,28 @@ app.post('/registrar', function(req,res){
                          email: fields['email']
                     }
                }).then(result=>{
-                    console.log(result);
-                    if(result['email'] === fields['email']){
-                         console.log("aiowdjwaiddawdawdawdawD")
-                    }else{
-                         console.log("Email encontrado:" + result[0]['email'])
+                    console.log(result.length);
+                    // Verifica se o email encontrado é igual ao email fornecido pelo usuário
+                    if(result.length===0){
                          console.log("Email Fornecido:" + fields['email'])
+                         // Utiliza o sequelize e insere os dados na tabela Users
+                         const resultadoCreate = Users.create({
+                              nome: fields['nome'],
+                              email: fields['email'],
+                              senha: hash
+                         })
+                         console.log(resultadoCreate);
+                         if(err) throw err;
+                         res.redirect('/');
+                    }else{
+                         // Se for, ele redireciona
+                         let emailExiste = true;
+                         console.log("Já existe conta com este email");
+                         res.render('registro', {emailExiste});
                     }
                })
-               // Utiliza o sequelize e insere os dados na tabela Users
-               // const resultadoCreate = Users.create({
-               //      nome: fields['nome'],
-               //      email: fields['email'],
-               //      senha: hash
-               // })
-               // console.log(resultadoCreate);
-               // if(err) throw err;
-               res.redirect('/');
+
+               
           })
           
      }) 
