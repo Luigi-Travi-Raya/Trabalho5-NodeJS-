@@ -9,15 +9,17 @@ section.gradient-custom.pt-1.pb-5
                             h2.fw-bold.mb-2.text-uppercase Registro
                             p.text-white-50.mb-5 
 
+                            - if(emailExiste!= null)
+                                .alert.alert-danger.p-0.mb-1
+                                    p Email já cadastrado
+                                    
                             form(action="/registrar", method="post") 
                                 div.form-outline.form-white.mt-5
                                     label.form-label(for="nome") Nome
                                     input.form-control.form-control-lg(type="text", name="nome", required)
                                 
                                 div.form-outline.form-white.mt-5.mb-2
-                                    - if(emailExiste!= null)
-                                        .alert.alert-danger.p-0.mb-1
-                                            p Email já cadastrado
+
                                     label.form-label(for="email") Email
                                     input.form-control.form-control-lg(type="email", name="email", required)
 

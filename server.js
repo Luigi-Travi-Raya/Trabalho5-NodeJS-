@@ -27,7 +27,9 @@ app.use(session({
 
 // Rota padrão
 app.get('/', function(req,res){
-     res.render('index'); 
+     nomeUsuario = req.session.nome
+     console.log(nomeUsuario);
+     res.render('index',{nomeUsuario}); 
 });
 
 //Rota "localhost/login"
@@ -44,7 +46,12 @@ app.get('/registro', function(req,res){
 app.get('/logout', function(req,res){
      if(req.session.logged){
           req.session.destroy();
-          let nomeUsuario = null;
+          req.session.nome = "0";
+          res.render('index',{nomeUsuario});
+          console.log("1")
+     }else{
+          req.session.nome = "0";
+          console.log("2")
           res.render('index',{nomeUsuario});
      }
 
@@ -62,17 +69,27 @@ app.post('/logar', function(req,res){
                     email: fields['email']
                }
           }).then(result=>{
-               bcrypt.compare(fields['senha'], result[0]['senha'], function(err, resultadoSenha){
-                    console.log(fields['senha']+"   "+result[0]['senha'])
-                    console.log(resultadoSenha)
-                    if(resultadoSenha){
-                         req.session.logged = true;
-                         req.session.nome = fields['nome'];
-                         let nomeUsuario = fields['nome'];
-                         res.render('index',{nomeUsuario});
-                         res.redirect('/');
-                    }
-               })
+               if(result.length!==0){
+                    bcrypt.compare(fields['senha'], result[0]['senha'], function(err, resultadoSenha){
+                         console.log(fields['senha']+"   "+result[0]['senha']);
+                         console.log(resultadoSenha);
+                         if(resultadoSenha){
+                              req.session.logged = true;
+                              req.session.nome = fields['nome'];
+                              
+                              res.redirect('/')
+
+                         }else{
+                              let erroLogin = "senha";
+                              console.log("senha nao corresponde");
+                              res.render('login',{erroLogin})
+                         }    
+                    })
+               }else{
+                    let erroLogin = "email";
+                    console.log("email nao cadastrado");
+                    res.render('login',{erroLogin})
+               }
           })
 
           
@@ -106,7 +123,7 @@ app.post('/registrar', function(req,res){
                          if(err) throw err;
                          req.session.logged = true;
                          req.session.nome = fields['nome'];
-                         let nomeUsuario = fields['nome'];
+                         let nomeUsuario = "1";
                          res.render('index',{nomeUsuario});
                     }else{
                          // Se for, ele redireciona

@@ -8,6 +8,14 @@ section.gradient-custom.pt-5.pb-5
                         div.mb-md-5.mt-md-4
                             h2.fw-bold.mb-2.text-uppercase Login
                             p.text-white-50.mb-5 
+                            
+                            if(erroLogin==="senha")
+                                .alert.alert-danger.p-0.mb-1
+                                    p Senha não corresponde 
+                                    
+                            if(erroLogin==="email")
+                                .alert.alert-danger.p-0.mb-1
+                                    p Email não cadastrado 
 
                             form(action="/logar", method="post") 
                                 div.form-outline-form-white-mt-5
