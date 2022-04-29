@@ -27,32 +27,37 @@ app.use(session({
 
 // Rota padrão
 app.get('/', function(req,res){
-     nomeUsuario = req.session.nome
-     console.log(nomeUsuario);
+     nomeUsuario = req.session.nome;
+     if(req.session.nome == null)
+          nomeUsuario = 0
+     console.log(nomeUsuario+"   "+req.session.nome);
      res.render('index',{nomeUsuario}); 
 });
 
 //Rota "localhost/login"
 app.get('/login', function(req,res){
-     res.render('login'); 
+     let erroLogin = req.session.erroLogin;
+     res.render('login',{erroLogin}); 
 });
 
 //Rota "localhost/registro"
 app.get('/registro', function(req,res){
-     res.render('registro'); 
+     erroRegistro = req.session.erroRegistro
+     if(erroRegistro == null)
+          erroRegistro = false;
+     res.render('registro',{erroRegistro}); 
 });
 
 //Rota "localhost/logout"
 app.get('/logout', function(req,res){
      if(req.session.logged){
           req.session.destroy();
-          req.session.nome = "0";
-          res.render('index',{nomeUsuario});
-          console.log("1")
+          res.redirect('/');
+          console.log("1");
      }else{
-          req.session.nome = "0";
-          console.log("2")
-          res.render('index',{nomeUsuario});
+          req.session.nome = 0;
+          console.log("2");
+          res.redirect('/');
      }
 
      
@@ -75,20 +80,19 @@ app.post('/logar', function(req,res){
                          console.log(resultadoSenha);
                          if(resultadoSenha){
                               req.session.logged = true;
-                              req.session.nome = fields['nome'];
-                              
-                              res.redirect('/')
-
+                              req.session.nome = result[0]['nome'];    
+                              console.log( result[0]['nome']);
+                              res.redirect('/');
                          }else{
-                              let erroLogin = "senha";
+                              req.session.erroLogin = "senha";
                               console.log("senha nao corresponde");
-                              res.render('login',{erroLogin})
+                              res.redirect('login')
                          }    
                     })
                }else{
-                    let erroLogin = "email";
+                    req.session.erroLogin = "email";
                     console.log("email nao cadastrado");
-                    res.render('login',{erroLogin})
+                    res.redirect('login')
                }
           })
 
@@ -123,13 +127,12 @@ app.post('/registrar', function(req,res){
                          if(err) throw err;
                          req.session.logged = true;
                          req.session.nome = fields['nome'];
-                         let nomeUsuario = "1";
-                         res.render('index',{nomeUsuario});
+                         res.redirect('/');
                     }else{
                          // Se for, ele redireciona
-                         let emailExiste = true;
+                         req.session.erroRegistro= true;
                          console.log("Já existe conta com este email");
-                         res.render('registro', {emailExiste});
+                         res.redirect('registro');
                     }
                })
 
