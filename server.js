@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const res = require('express/lib/response');
+const session = require('express-session')
 
 const formidable = require('formidable');
 const bcrypt = require('bcrypt');
@@ -16,6 +17,11 @@ app.use(express.static('public'))
 // Define a template engine padrão para o Pug
 app.set('view engine','pug');
 
+app.use(session({
+     secret: 'JoaoPedro',
+     resave: false,
+     saveUninitialized: true
+}));
 
 //---------------------ROTAS---------------------------
 
@@ -34,13 +40,43 @@ app.get('/registro', function(req,res){
      res.render('registro'); 
 });
 
+//Rota "localhost/logout"
+app.get('/logout', function(req,res){
+     if(req.session.logged){
+          req.session.destroy();
+          let nomeUsuario = null;
+          res.render('index',{nomeUsuario});
+     }
+
+     
+})
 
 //Rota "localhost/logar"
 app.post('/logar', function(req,res){
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
-          console.log("OI")
-          res.redirect('/');
+          console.log(fields);
+
+          const resultadoConsulta = Users.findAll({
+               where:{
+                    email: fields['email']
+               }
+          }).then(result=>{
+               bcrypt.compare(fields['senha'], result[0]['senha'], function(err, resultadoSenha){
+                    console.log(fields['senha']+"   "+result[0]['senha'])
+                    console.log(resultadoSenha)
+                    if(resultadoSenha){
+                         req.session.logged = true;
+                         req.session.nome = fields['nome'];
+                         let nomeUsuario = fields['nome'];
+                         res.render('index',{nomeUsuario});
+                         res.redirect('/');
+                    }
+               })
+          })
+
+          
+          
      }) 
 });
 
@@ -50,7 +86,7 @@ app.post('/registrar', function(req,res){
      form.parse(req, function (err1, fields, files) {
      // Encripta a senha
           bcrypt.hash(fields['senha'],saltRounds, function(err,hash){
-               // Consulta a tabela Users para 
+               // Consulta a tabela Users para veriricar o email
                const resultadoConsulta = Users.findAll({
                     where:{
                          email: fields['email']
@@ -60,7 +96,7 @@ app.post('/registrar', function(req,res){
                     // Verifica se o email encontrado é igual ao email fornecido pelo usuário
                     if(result.length===0){
                          console.log("Email Fornecido:" + fields['email'])
-                         // Utiliza o sequelize e insere os dados na tabela Users
+                         // Insere os dados na tabela Users
                          const resultadoCreate = Users.create({
                               nome: fields['nome'],
                               email: fields['email'],
@@ -68,7 +104,10 @@ app.post('/registrar', function(req,res){
                          })
                          console.log(resultadoCreate);
                          if(err) throw err;
-                         res.redirect('/');
+                         req.session.logged = true;
+                         req.session.nome = fields['nome'];
+                         let nomeUsuario = fields['nome'];
+                         res.render('index',{nomeUsuario});
                     }else{
                          // Se for, ele redireciona
                          let emailExiste = true;

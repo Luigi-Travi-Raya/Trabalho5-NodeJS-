@@ -15,9 +15,15 @@ html(lang="en")
     body.bg-secondary 
         header.nav.bg-dark.text-white.p-3.d-flex
             h3.flex-grow-1.m-1 Trabalho 5
-            .nav-item.m-1
-                a(href="http://localhost/login" style="text-decoration: none; color:white ") 
-                    button.btn.btn-outline-success.my-2.my-sm-0 Login
-            .nav-item.m-1
-                a(href="http://localhost/registro" style="text-decoration: none; color:white ") 
-                    button.btn.btn-outline-success.my-2.my-sm-0 Registro
+            if(nomeUsuario!=null)
+                .nav-item.m-1
+                    a(href="http://localhost/login" style="text-decoration: none; color:white ") 
+                        button.btn.btn-outline-success.my-2.my-sm-0 Login
+                .nav-item.m-1
+                    a(href="http://localhost/registro" style="text-decoration: none; color:white ") 
+                        button.btn.btn-outline-success.my-2.my-sm-0 Registro
+            - else
+                .nav-item.m-1
+                    a(href="http://localhost/logout" style="text-decoration: none; color:white ") 
+                        button.btn.btn-outline-success.my-2.my-sm-0 Logout
+
