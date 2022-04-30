@@ -63,6 +63,14 @@ app.get('/logout', function(req,res){
      
 })
 
+//Rota "localhost/adciona"
+app.get('/adciona', function(req,res){
+     if(req.session.logged)
+          res.render('adciona');
+     else
+          res.redirect('/login')
+})
+
 //Rota "localhost/logar"
 app.post('/logar', function(req,res){
      let form = new formidable.IncomingForm();
