@@ -80,6 +80,40 @@ app.get('/adciona', (req,res)=>{
           res.redirect('/login')
 })
 
+//Rota "localhost/edita/idFoto"
+app.get('/edita/', (req,res)=>{
+     if(req.session.logged){
+          idFoto = req.query.id;
+          Fotos.findAll({
+               where:{
+                    id: idFoto
+               }
+          }).then(result=>{
+               dadosFoto = result;
+               res.render('edita',{dadosFoto});
+          })
+     }else{
+          res.redirect('/login')
+     }
+});
+
+//Rota "localhost/exclui/idFoto"
+app.get('/exclui/', (req,res)=>{
+     if(req.session.logged){
+          idFoto = req.query.id;
+          Fotos.findAll({
+               where:{
+                    id: idFoto
+               }
+          }).then(result=>{
+               dadosFoto = result;
+               res.render('exclui',{dadosFoto});
+          })
+     }else{
+          res.redirect('/login')
+     }
+});
+
 //Rota "localhost/logar"
 app.post('/logar', (req,res)=>{
      let form = new formidable.IncomingForm();
@@ -188,23 +222,6 @@ app.post('/adcionar', (req,res)=>{
      })
 });
 
-//Rota "localhost/edita/idFoto"
-app.get('/edita/', (req,res)=>{
-     if(req.session.logged){
-          idFoto = req.query.id;
-          Fotos.findAll({
-               where:{
-                    id: idFoto
-               }
-          }).then(result=>{
-               dadosFoto = result;
-               res.render('edita',{dadosFoto});
-          })
-     }else{
-          res.redirect('/login')
-     }
-});
-
 //Rota "localhost/editar/?id="
 app.post('/editar/', (req,res)=>{
      let idFoto = req.query.id;
@@ -267,6 +284,27 @@ app.post('/editar/', (req,res)=>{
      })
 });
 
+//Rota "localhost/excluir/?id="
+app.post('/excluir/', (req,res)=>{
+     let idFoto = req.query.id;
+     Fotos.findAll({
+          where:{
+               id: idFoto
+          }
+     }).then(result=>{
+          nomeFoto = result['0']['imagem'];
+          fs.unlink('./public/img/'+nomeFoto,function(err){
+               if(err) throw err;
+          })
+          Fotos.destroy({
+               where:{
+                    id: idFoto
+               }
+          }).then(
+               res.redirect('/')
+          )
+     })
+});
 
 
 // Mapeamento das tabelas da Database

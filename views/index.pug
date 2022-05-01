@@ -2,21 +2,20 @@ include ./layout/header.pug
 include ./layout/style.pug
 .container.mt-3(style="width:100%")
     .row
-        - let n = 0
-        while n < dadosFoto.length
-            .col-sm-3.mt-3
-                .card.border-0.img-fluid.img-responsive(style="width:100%;height:25rem")
-                    img.card-img-top(src='img/' + dadosFoto[n]['imagem'] style="width: 100%; height: 15vw;object-fit: cover;")
-                    .card-body
-                        h5.card-title= dadosFoto[n]['nome'] 
-                        p.card-text= dadosFoto[n]['descricao']
-                        footer.blockquote-footer.mt-2(style="font-size: 70%") Postado por:    
-                            = dadosFoto[n]['autor']
-                        if(nomeUsuario !== 0)
-                            a(href="/excluir" style="text-decoration: none; color:white ") 
-                                button.btn.btn-outline-danger.my-2.my-sm-0 Excluir
-                            a(href="/edita/?id="+dadosFoto[n]['id'] style="text-decoration: none; color:white ") 
-                                button.btn.btn-outline-info.my-2.my-sm-0 Editar
-                        - n++
-        
+            - let n = 0
+            while n < dadosFoto.length
+                .col-sm-3.mt-3
+                    .card.border-0.img-fluid.img-responsive(style="width:100%;height:25rem")
+                        img.card-img-top(src='img/' + dadosFoto[n]['imagem'] style="width: 100%; height: 15vw;object-fit: cover;")
+                        .card-body
+                            h5.card-title= dadosFoto[n]['nome'] 
+                            p.card-text= dadosFoto[n]['descricao']
+                            footer.blockquote-footer.mt-2(style="font-size: 70%") Postado por:    
+                                = dadosFoto[n]['autor']
+                            if(nomeUsuario !== 0)
+                                a(href="/exclui/?id="+dadosFoto[n]['id'] style="text-decoration: none; color:white ") 
+                                    button.btn.btn-outline-danger.my-2.my-sm-0 Excluir
+                                a(href="/edita/?id="+dadosFoto[n]['id'] style="text-decoration: none; color:white ") 
+                                    button.btn.btn-outline-info.my-2.my-sm-0 Editar
+                            - n++
 
