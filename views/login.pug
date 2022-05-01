@@ -18,14 +18,16 @@ section.gradient-custom.pt-5.pb-5
                                 .alert.alert-danger.p-0.mb-1
                                     p Email não cadastrado 
 
-                            form(action="/logar", method="post") 
-                                div.form-outline-form-white-mt-5
-                                    label.form-label(for="email") Email
-                                    input.form-control.form-control-lg(type="email", name="email", required)  
 
-                                div.form-outline.form-white.mt-5.mb-2
-                                    label.form-label(for="senha") Senha
-                                    input.form-control.form-control-lg(type="password", name="senha", required)
+                            form(action="/logar", method="post") 
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="email", name="email", placeholder="Email",required) 
+                                    label.form-label(for="email" style="color: black;") Email
+                                     
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="password", name="senha", placeholder="Senha", required)
+                                    label.form-label(for="senha" style="color: black;") Senha
+
 
                                 p.mb-0 Não possui uma conta ainda? Registre-se   
                                     a.text-white-50.fw-bold(href="registro") aqui

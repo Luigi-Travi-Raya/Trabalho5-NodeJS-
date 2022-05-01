@@ -16,21 +16,21 @@ section.gradient-custom.pt-1.pb-5
                                 .alert.alert-danger.p-0.mb-1
                                     p Email já cadastrado
 
-                            form(action="/adcionar", method="post") 
+                            form(action="/adcionar", method="post", enctype="multipart/form-data") 
                                 div.form-floating.mt-5.mb-3
-                                    label.form(for="nomeImg" style="color: black;") Nome da Imagem
-                                    input.form-control(type="text", name="nomeImg", required)
+                                    input.form-control(type="text", name="nomeFoto", placeholder="Nome da Imagem", required)
+                                    label.form(for="nomeFoto" style="color: black;") Nome da Imagem
                                 
-                                div.form-outline.form-white.mt-5.mb-2
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="textarea", name="desc",placeholder="Email", required)
+                                    label.form(for="desc" style="color: black;") Descrição da Foto
+                                    
 
-                                    label.form-label(for="desc") Descrição da Foto
-                                    input.form-control.form-control-lg(type="textarea", name="desc", required)
-
                                 div.form-outline.form-white.mt-5.mb-2
-                                    label.form-label(for="foto") Foto
-                                    input.form-control.form-control-lg(type="file", name="foto", required)
+                                    input.form-control(type="file", name="foto", placeholder="Foto", required)
+                                    
 
                                 a(href="/")
                                     div.btn.btn-outline-danger.btn-lg.px-5.mt-5.m-3 Ínicio
 
-                                button.btn.btn-outline-success.btn-lg.px-5.mt-5.m-3(type="submit") Registrar
+                                button.btn.btn-outline-success.btn-lg.px-5.mt-5.m-3(type="submit") Enviar Foto

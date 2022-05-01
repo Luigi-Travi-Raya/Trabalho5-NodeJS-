@@ -15,18 +15,19 @@ section.gradient-custom.pt-1.pb-5
                                     p Email já cadastrado
 
                             form(action="/registrar", method="post") 
-                                div.form-outline.form-white.mt-5
-                                    label.form-label(for="nome") Nome
-                                    input.form-control.form-control-lg(type="text", name="nome", required)
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="text", name="nome", placeholder="Nome", required)
+                                    label(for="nome" style="color: black;") Nome
                                 
-                                div.form-outline.form-white.mt-5.mb-2
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="email", name="email", placeholder="Email", required)
+                                    label(for="email" style="color: black;") Email
+                                   
 
-                                    label.form-label(for="email") Email
-                                    input.form-control.form-control-lg(type="email", name="email", required)
-
-                                div.form-outline.form-white.mt-5.mb-2
-                                    label.form-label(for="senha") Senha
-                                    input.form-control.form-control-lg(type="password", name="senha", required)
+                                div.form-floating.mt-5.mb-3
+                                    input.form-control(type="password", name="senha", placeholder="Senha", required)
+                                    label(for="senha" style="color: black;") Senha
+                                    
 
                                 p.mb-0 Já possui conta? Se logue 
                                     a.text-white-50.fw-bold(href="login") aqui

@@ -6,7 +6,13 @@ const session = require('express-session')
 const formidable = require('formidable');
 const bcrypt = require('bcrypt');
 const pug = require('pug');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
 const Users = require('./model/users');
+const Fotos = require('./model/fotos');
+
 
 const saltRounds = 10;
 const port = 80;
@@ -30,7 +36,6 @@ app.get('/', function(req,res){
      nomeUsuario = req.session.nome;
      if(req.session.nome == null)
           nomeUsuario = 0
-     console.log(nomeUsuario+"   "+req.session.nome);
      res.render('index',{nomeUsuario}); 
 });
 
@@ -53,10 +58,8 @@ app.get('/logout', function(req,res){
      if(req.session.logged){
           req.session.destroy();
           res.redirect('/');
-          console.log("1");
      }else{
           req.session.nome = 0;
-          console.log("2");
           res.redirect('/');
      }
 
@@ -75,8 +78,6 @@ app.get('/adciona', function(req,res){
 app.post('/logar', function(req,res){
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
-          console.log(fields);
-
           const resultadoConsulta = Users.findAll({
                where:{
                     email: fields['email']
@@ -84,22 +85,17 @@ app.post('/logar', function(req,res){
           }).then(result=>{
                if(result.length!==0){
                     bcrypt.compare(fields['senha'], result[0]['senha'], function(err, resultadoSenha){
-                         console.log(fields['senha']+"   "+result[0]['senha']);
-                         console.log(resultadoSenha);
                          if(resultadoSenha){
                               req.session.logged = true;
                               req.session.nome = result[0]['nome'];    
-                              console.log( result[0]['nome']);
                               res.redirect('/');
                          }else{
                               req.session.erroLogin = "senha";
-                              console.log("senha nao corresponde");
                               res.redirect('login')
                          }    
                     })
                }else{
                     req.session.erroLogin = "email";
-                    console.log("email nao cadastrado");
                     res.redirect('login')
                }
           })
@@ -121,17 +117,14 @@ app.post('/registrar', function(req,res){
                          email: fields['email']
                     }
                }).then(result=>{
-                    console.log(result.length);
                     // Verifica se o email encontrado é igual ao email fornecido pelo usuário
                     if(result.length===0){
-                         console.log("Email Fornecido:" + fields['email'])
                          // Insere os dados na tabela Users
                          const resultadoCreate = Users.create({
                               nome: fields['nome'],
                               email: fields['email'],
                               senha: hash
                          })
-                         console.log(resultadoCreate);
                          if(err) throw err;
                          req.session.logged = true;
                          req.session.nome = fields['nome'];
@@ -139,7 +132,6 @@ app.post('/registrar', function(req,res){
                     }else{
                          // Se for, ele redireciona
                          req.session.erroRegistro= true;
-                         console.log("Já existe conta com este email");
                          res.redirect('registro');
                     }
                })
@@ -149,6 +141,37 @@ app.post('/registrar', function(req,res){
           
      }) 
 });
+
+//Rota "localhost/adcionar"
+app.post('/adcionar', function(req,res){
+     let form = new formidable.IncomingForm();
+     form.parse(req, function (err1, fields, files) {
+          //Gera um hash para usar como nome da Imagem
+          let enderecoFoto = files.foto.filepath;
+          let hashGerada = crypto.createHash('md5').update(Date.now().toString()).digest('hex');
+          let nomeFoto = hashGerada + '.' + files.foto.mimetype.split('/')[1];
+          
+          //Muda o endereço da Imagem
+          let novoEnderecoFoto = path.join(__dirname, 'public/img' , nomeFoto);
+          fs.rename(enderecoFoto, novoEnderecoFoto, function(err){ if (err) throw err})
+
+          let autorFoto = req.session.nome;
+          
+          console.log(autorFoto + "\n" + nomeFoto + "\n" + fields['nomeFoto'] + "\n" + fields['desc']);
+
+          //Realiza a inserção no banco
+          const resultadoCreate = Fotos.create({
+               nome: fields['nomeFoto'],
+               autor: autorFoto,
+               descricao: fields['desc'],
+               imagem: nomeFoto
+          })
+          if(err1) throw err1;
+
+          res.redirect('/');
+     })
+});
+
 
 
 // Mapeamento das tabelas da Database
