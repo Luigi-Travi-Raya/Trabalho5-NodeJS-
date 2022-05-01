@@ -31,11 +31,11 @@ app.use(session({
 //---------------------ROTAS---------------------------
 
 // Rota padrão
-app.get('/', function(req,res){
+app.get('/', (req,res)=>{
      nomeUsuario = req.session.nome;
      if(req.session.nome == null)
           nomeUsuario = 0
-
+     console.log(req.session.id)
      let dadosFoto = [];
      const resultadoConsulta = Fotos.findAll({}).then(result=>{
           dadosFoto = result;
@@ -45,13 +45,13 @@ app.get('/', function(req,res){
 });
 
 //Rota "localhost/login"
-app.get('/login', function(req,res){
+app.get('/login', (req,res)=>{
      let erroLogin = req.session.erroLogin;
      res.render('login',{erroLogin}); 
 });
 
 //Rota "localhost/registro"
-app.get('/registro', function(req,res){
+app.get('/registro', (req,res)=>{
      erroRegistro = req.session.erroRegistro
      if(erroRegistro == null)
           erroRegistro = false;
@@ -59,7 +59,7 @@ app.get('/registro', function(req,res){
 });
 
 //Rota "localhost/logout"
-app.get('/logout', function(req,res){
+app.get('/logout', (req,res)=>{
      if(req.session.logged){
           req.session.destroy();
           res.redirect('/');
@@ -72,7 +72,7 @@ app.get('/logout', function(req,res){
 })
 
 //Rota "localhost/adciona"
-app.get('/adciona', function(req,res){
+app.get('/adciona', (req,res)=>{
      if(req.session.logged)
           res.render('adciona');
      else
@@ -80,9 +80,10 @@ app.get('/adciona', function(req,res){
 })
 
 //Rota "localhost/logar"
-app.post('/logar', function(req,res){
+app.post('/logar', (req,res)=>{
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
+          //Consulta para buscar usuário com o email passado pelo user
           const resultadoConsulta = Users.findAll({
                where:{
                     email: fields['email']
@@ -92,7 +93,8 @@ app.post('/logar', function(req,res){
                     bcrypt.compare(fields['senha'], result[0]['senha'], function(err, resultadoSenha){
                          if(resultadoSenha){
                               req.session.logged = true;
-                              req.session.nome = result[0]['nome'];    
+                              req.session.nome = result[0]['nome'];
+                              req.session.userId = result[0]['id']    
                               res.redirect('/');
                          }else{
                               req.session.erroLogin = "senha";
@@ -111,7 +113,7 @@ app.post('/logar', function(req,res){
 });
 
 //Rota "localhost/registrar"
-app.post('/registrar', function(req,res){
+app.post('/registrar', (req,res)=>{
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
      // Encripta a senha
@@ -130,10 +132,20 @@ app.post('/registrar', function(req,res){
                               email: fields['email'],
                               senha: hash
                          })
-                         if(err) throw err;
-                         req.session.logged = true;
-                         req.session.nome = fields['nome'];
-                         res.redirect('/');
+                         //Consulta para pegar o ID do usuário recém criado
+                         const resultadoConsulta = Users.findAll({
+                              where:{
+                                   email: fields['email']
+                              }
+                              
+                         }).then(result=>{
+                                   if(err) throw err;
+                                   req.session.logged = true;
+                                   req.session.nome = fields['nome'];
+                                   req.session.userId = result['id'];
+                                   res.redirect('/');
+                              })
+
                     }else{
                          // Se for, ele redireciona
                          req.session.erroRegistro= true;
@@ -148,7 +160,7 @@ app.post('/registrar', function(req,res){
 });
 
 //Rota "localhost/adcionar"
-app.post('/adcionar', function(req,res){
+app.post('/adcionar', (req,res)=>{
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
           //Gera um hash para usar como nome da Imagem
@@ -175,6 +187,26 @@ app.post('/adcionar', function(req,res){
      })
 });
 
+//Rota "localhost/edita/idFoto"
+app.get('/edita/', (req,res)=>{
+     if(req.session.logged){
+          idFoto = req.query.id;
+          console.log(idFoto);
+          Fotos.findAll({
+               where:{
+                    id: idFoto
+               }
+          }).then(result=>{
+               console.log(idFoto);
+               dadosFoto = result;
+               res.render('edita',{dadosFoto});
+          })
+     }else{
+          res.redirect('/login')
+     }
+});
+
+
 
 
 // Mapeamento das tabelas da Database
@@ -189,7 +221,7 @@ app.post('/adcionar', function(req,res){
      } catch (error) {
           console.log(error);
      }
-     })();
+})();
 
      
 let server = app.listen(port, () =>{
