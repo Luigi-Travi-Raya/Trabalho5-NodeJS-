@@ -1,5 +1,6 @@
 const database = require('../config/db');
 const Sequelize = require('sequelize');
+const Fotos = require('./fotos.js')
 
 const Users = database.define('Users', {
     id: {
@@ -22,5 +23,5 @@ const Users = database.define('Users', {
         allowNull: false,
     }
 })
-
+Users.hasMany(Fotos);
 module.exports = Users;

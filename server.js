@@ -40,6 +40,7 @@ app.get('/', (req,res)=>{
      let dadosFoto = [];
      const resultadoConsulta = Fotos.findAll({}).then(result=>{
           dadosFoto = result;
+          Users.findAll({})
           res.render('index',{nomeUsuario,dadosFoto});
      })
  
@@ -207,12 +208,12 @@ app.post('/adcionar', (req,res)=>{
           let novoEnderecoFoto = path.join(__dirname, 'public/img' , nomeFoto);
           fs.rename(enderecoFoto, novoEnderecoFoto, function(err){ if (err) throw err})
 
-          let autorFoto = req.session.nome;
+          let autorFoto = req.session.userId;
           
           //Realiza a inserção no banco
           const resultadoCreate = Fotos.create({
                nome: fields['nomeFoto'],
-               autor: autorFoto,
+               id_autor: autorFoto,
                descricao: fields['desc'],
                imagem: nomeFoto
           })

@@ -12,9 +12,13 @@ const Fotos = database.define('Fotos', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    autor: {
-        type: Sequelize.STRING,
-        allowNull: false
+    id_autor: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references:{
+            model: 'users',
+            key: 'id'  
+        }
     },
     imagem: { 
         type: Sequelize.STRING 
