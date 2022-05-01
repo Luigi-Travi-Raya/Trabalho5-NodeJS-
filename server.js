@@ -13,7 +13,6 @@ const path = require('path');
 const Users = require('./model/users');
 const Fotos = require('./model/fotos');
 
-
 const saltRounds = 10;
 const port = 80;
 
@@ -40,7 +39,6 @@ app.get('/', function(req,res){
      let dadosFoto = [];
      const resultadoConsulta = Fotos.findAll({}).then(result=>{
           dadosFoto = result;
-          console.log(dadosFoto);
           res.render('index',{nomeUsuario,dadosFoto});
      })
  
@@ -164,8 +162,6 @@ app.post('/adcionar', function(req,res){
 
           let autorFoto = req.session.nome;
           
-          console.log(autorFoto + "\n" + nomeFoto + "\n" + fields['nomeFoto'] + "\n" + fields['desc']);
-
           //Realiza a inserção no banco
           const resultadoCreate = Fotos.create({
                nome: fields['nomeFoto'],
@@ -187,7 +183,7 @@ app.post('/adcionar', function(req,res){
      const Fotos = require('./model/fotos');
      const Users = require('./model/users');
      try {
-          await database.sync();;
+          await database.sync();
           console.log("SUCESSO!!");
 
      } catch (error) {

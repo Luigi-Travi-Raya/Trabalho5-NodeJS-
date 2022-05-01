@@ -10,6 +10,8 @@ include ./layout/style.pug
                     .card-body
                         h5.card-title= dadosFoto[n]['nome'] 
                         p.card-text= dadosFoto[n]['descricao']
+                        div.card-footer(style="font-size: 70%") Postado por:    
+                            = dadosFoto[n]['autor']
                         - n++
         
 
