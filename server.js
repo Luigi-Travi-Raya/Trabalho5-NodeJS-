@@ -12,6 +12,7 @@ const path = require('path');
 
 const Users = require('./model/users');
 const Fotos = require('./model/fotos');
+const req = require('express/lib/request');
 
 const saltRounds = 10;
 const port = 80;
@@ -191,13 +192,11 @@ app.post('/adcionar', (req,res)=>{
 app.get('/edita/', (req,res)=>{
      if(req.session.logged){
           idFoto = req.query.id;
-          console.log(idFoto);
           Fotos.findAll({
                where:{
                     id: idFoto
                }
           }).then(result=>{
-               console.log(idFoto);
                dadosFoto = result;
                res.render('edita',{dadosFoto});
           })
@@ -206,6 +205,67 @@ app.get('/edita/', (req,res)=>{
      }
 });
 
+//Rota "localhost/editar/?id="
+app.post('/editar/', (req,res)=>{
+     let idFoto = req.query.id;
+     let form = new formidable.IncomingForm();
+     form.parse(req, function (err1, fields, files) {
+          if(files.foto.size==0){
+               let novoNome = fields['nome'];
+               let novoDesc = fields['desc'];
+
+               Fotos.update({
+                    nome: novoNome,
+                    descricao: novoDesc
+                    },{
+                         where:{id: idFoto}
+                    }    
+               ).then(
+                    res.redirect('/')
+               )
+
+          }else{
+               let novoNome = fields['nome'];
+               let novoDesc = fields['desc'];
+
+               //Gera um hash para ser o novo nome da imagem
+               let enderecoFoto = files.foto.filepath;
+               let hashGerada = crypto.createHash('md5').update(Date.now().toString()).digest('hex');
+               let nomeFoto = hashGerada + '.' + files.foto.mimetype.split('/')[1];
+          
+               //Muda o endereço da Imagem
+               let novoEnderecoFoto = path.join(__dirname, 'public/img' , nomeFoto);
+               fs.rename(enderecoFoto, novoEnderecoFoto, function(err){ if (err) throw err})
+
+               //Consulta para saber o nome da imagem antiga
+               Fotos.findAll({
+                    where:{
+                         id: idFoto
+                    }
+               }).then(result=>{
+                    nomeVelhoFoto = result[0]['imagem'];
+                    //Apaga a imagem antiga
+                    fs.unlink('./public/img/'+nomeVelhoFoto,function(err){
+                         if(err) throw err;
+                    })
+
+                    // Realiza o update na tabela
+                    Fotos.update({
+                         nome: novoNome,
+                         descricao: novoDesc,
+                         imagem: nomeFoto
+                         },{
+                              where:{id: idFoto}
+                         }    
+                    ).then(
+                         res.redirect('/')
+                    )
+               })
+          }
+
+
+     })
+});
 
 
 
