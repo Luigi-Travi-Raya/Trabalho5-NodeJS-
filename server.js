@@ -36,7 +36,14 @@ app.get('/', function(req,res){
      nomeUsuario = req.session.nome;
      if(req.session.nome == null)
           nomeUsuario = 0
-     res.render('index',{nomeUsuario}); 
+
+     let dadosFoto = [];
+     const resultadoConsulta = Fotos.findAll({}).then(result=>{
+          dadosFoto = result;
+          console.log(dadosFoto);
+          res.render('index',{nomeUsuario,dadosFoto});
+     })
+ 
 });
 
 //Rota "localhost/login"

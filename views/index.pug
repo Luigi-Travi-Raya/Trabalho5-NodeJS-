@@ -2,13 +2,14 @@ include ./layout/header.pug
 include ./layout/style.pug
 .container.mt-3(style="width:100%")
     .row
-        - let n = 0;
-        while n < 6
+        - let n = 0
+        while n < dadosFoto.length
             .col-sm-3.mt-3
                 .card.border-0(style="width:100%")
-                    img.card-img-top(src='img/teste3.png')
+                    img.card-img-top(src='img/' + dadosFoto[n]['imagem'])
                     .card-body
-                        h5.card-title Nome da imagem  
-                        p.card-text= n++
+                        h5.card-title= dadosFoto[n]['nome'] 
+                        p.card-text= dadosFoto[n]['descricao']
+                        - n++
         
 
