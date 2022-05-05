@@ -36,12 +36,23 @@ app.get('/', (req,res)=>{
      nomeUsuario = req.session.nome;
      if(req.session.nome == null)
           nomeUsuario = 0
-     console.log(req.session.id)
+
      let dadosFoto = [];
      const resultadoConsulta = Fotos.findAll({}).then(result=>{
           dadosFoto = result;
-          Users.findAll({})
-          res.render('index',{nomeUsuario,dadosFoto});
+
+          if(req.session.logged){
+               Users.findAll({
+                    where:{
+                         email: req.session.email
+                    }
+               }).then(result=>{
+                    userId = result[0]['id'];
+                    res.render('index',{nomeUsuario,dadosFoto,userId});
+               })
+          }else{
+               res.render('index',{nomeUsuario,dadosFoto});
+          }
      })
  
 });
@@ -116,6 +127,7 @@ app.get('/exclui/', (req,res)=>{
 });
 
 //Rota "localhost/logar"
+// Ao logar cria sessions "logged = true; nome; email"
 app.post('/logar', (req,res)=>{
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
@@ -130,7 +142,7 @@ app.post('/logar', (req,res)=>{
                          if(resultadoSenha){
                               req.session.logged = true;
                               req.session.nome = result[0]['nome'];
-                              req.session.userId = result[0]['id']    
+                              req.session.email = result[0]['email'];   
                               res.redirect('/');
                          }else{
                               req.session.erroLogin = "senha";
@@ -149,6 +161,7 @@ app.post('/logar', (req,res)=>{
 });
 
 //Rota "localhost/registrar"
+// Ao registrar cria sessions "logged = true; nome; email"
 app.post('/registrar', (req,res)=>{
      let form = new formidable.IncomingForm();
      form.parse(req, function (err1, fields, files) {
@@ -168,20 +181,11 @@ app.post('/registrar', (req,res)=>{
                               email: fields['email'],
                               senha: hash
                          })
-                         //Consulta para pegar o ID do usuário recém criado
-                         const resultadoConsulta = Users.findAll({
-                              where:{
-                                   email: fields['email']
-                              }
-                              
-                         }).then(result=>{
-                                   if(err) throw err;
-                                   req.session.logged = true;
-                                   req.session.nome = fields['nome'];
-                                   req.session.userId = result['id'];
-                                   res.redirect('/');
-                              })
-
+                         if(err) throw err;
+                         req.session.logged = true;
+                         req.session.nome = fields['nome'];
+                         req.session.email = fields['email'];
+                         res.redirect('/');
                     }else{
                          // Se for, ele redireciona
                          req.session.erroRegistro= true;

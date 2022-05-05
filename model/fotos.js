@@ -20,6 +20,10 @@ const Fotos = database.define('Fotos', {
             key: 'id'  
         }
     },
+    nm_autor:{
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     imagem: { 
         type: Sequelize.STRING 
     },
